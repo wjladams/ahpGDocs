@@ -26,6 +26,7 @@
     <script src="model.js"></script>
     <!--Now calculations-->
     <script>
+      MAX_PHONES=5
       function twoDArray(nrows, ncols) {
         let rval = []
         for(let r=0; r < nrows; r++) {
@@ -91,7 +92,8 @@
         })
         xs=[]
         ys=[]
-        for(let i=0; i < scores.length; i++) {
+        let phones_to_show = Math.min(scores.length, MAX_PHONES)
+        for(let i=0; i < phones_to_show; i++) {
           xs[i] = AHP_MODEL.alts[indices[i]]
           ys[i] = Math.round(scores[indices[i]]*100)
         }
@@ -105,7 +107,8 @@
         var layout = {
           autosize: false,
           //width: 500,
-          //height: 500,
+          height: 750,
+          yaxis: {range: [0, 100]},
           margin: {
             l: 50,
             r: 50,
