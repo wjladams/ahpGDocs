@@ -12,9 +12,17 @@
   </head>
   <body>
     <h1>Cell Phone Choice Results</h1>
-
+    Your results are as follows, please note the following:
+    <ul>
+      <li>The scores are out of 100 points.
+      <li>A 100 point score means that option is your perfect phone!
+      <li>Nothing will ever hit a perfect 100 points
+    </ul>
+    <div id='myPlot'><!-- Plotly chart will be drawn inside this DIV --></div>
     <!-- Optional JavaScript -->
-    <script src="https://cdn.jsdelivr.net/gh/dlens/anpjs/ahp.js"></script>
+    <!--<script src="https://cdn.jsdelivr.net/gh/dlens/anpjs/ahp.js"></script>-->
+    <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+    <script src="../anpjs/ahp.js"></script>
     <script src="model.js"></script>
     <!--Now calculations-->
     <script>
@@ -60,7 +68,54 @@
       function myCallback(spreadsheetdata) {
         // do something with spreadsheet data here
         let matrix = gsToMatrix(spreadsheetdata)
-        console.log(matrix);
+        //Let's get the last row and headers as a dictionary
+        let ncols = matrix[0].length
+        //The last row
+        let ourRow = matrix.length - 1
+        for(let col=0; col < ncols; col++) {
+          let colHeader = matrix[0][col]
+          let vote = matrix[ourRow][col]
+          if ((vote != null) && (vote != "")) {
+            betterScaleDataToAHP(colHeader, vote, AHP_MODEL)
+          }
+        }
+        //Now we have the AHP model populated, now synthesize
+        scores = AHP_MODEL.synthesize();
+        //Let's sort them from largest to smallest
+        indices = []
+        for(let i=0; i < scores.length; i++) {
+          indices.push(i)
+        }
+        indices.sort(function(a,b) {
+          return scores[b]-scores[a]
+        })
+        xs=[]
+        ys=[]
+        for(let i=0; i < scores.length; i++) {
+          xs[i] = AHP_MODEL.alts[indices[i]]
+          ys[i] = Math.round(scores[indices[i]]*100)
+        }
+        var data = [
+          {
+            x: xs,
+            y: ys,
+            type: 'bar'
+          }
+        ];
+        var layout = {
+          autosize: false,
+          //width: 500,
+          //height: 500,
+          margin: {
+            l: 50,
+            r: 50,
+            b: 100,
+            t: 100,
+            pad: 4
+          },
+        };
+        Plotly.newPlot('myPlot', data, layout)
+        console.log(scores);
       }
     </script>
     <script src="https://spreadsheets.google.com/feeds/cells/1jxuBHUYA8Jy5iSRx2PZ7lNg0Ag2gf-cC63LoCCru-j4/1/public/values?alt=json-in-script&callback=myCallback"></script>
