@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <title>Cell Phone Consumer Results</title>
+  </head>
+  <body>
+    <h1>Cell Phone Choice Results</h1>
+
+    <!-- Optional JavaScript -->
+    <script src="https://cdn.jsdelivr.net/gh/dlens/anpjs/ahp.js"></script>
+    <script src="model.js"></script>
+    <!--Now calculations-->
+    <script>
+      function twoDArray(nrows, ncols) {
+        let rval = []
+        for(let r=0; r < nrows; r++) {
+          let row=[]
+          for (let c=0; c < ncols; c++) {
+            row.push("")
+          }
+          rval.push(row)
+        }
+        return rval
+      }
+
+      function gsToMatrix(spreadsheetdata) {
+        let entries = spreadsheetdata["feed"]["entry"]
+        let maxRow=0
+        let maxCol=0
+        let row=null
+        let col=null
+        for (entry of entries) {
+          let data = entry["gs$cell"]
+          row = data["row"]
+          col = data["col"]
+          if (row > maxRow) {
+            maxRow = row
+          }
+          if (col > maxCol) {
+            maxCol = col
+          }
+        }
+        let rval = twoDArray(maxRow, maxCol)
+        for (entry of entries) {
+          let data = entry["gs$cell"]
+          row = Number(data["row"])-1
+          col = Number(data["col"])-1
+          let val = data["$t"]
+          rval[row][col]=val
+        }
+        return rval
+      }
+      function myCallback(spreadsheetdata) {
+        // do something with spreadsheet data here
+        let matrix = gsToMatrix(spreadsheetdata)
+        console.log(matrix);
+      }
+    </script>
+    <script src="https://spreadsheets.google.com/feeds/cells/1jxuBHUYA8Jy5iSRx2PZ7lNg0Ag2gf-cC63LoCCru-j4/1/public/values?alt=json-in-script&callback=myCallback"></script>
+    <!--
+    <script src="https://spreadsheets.google.com/feeds/cells/1jxuBHUYA8Jy5iSRx2PZ7lNg0Ag2gf-cC63LoCCru-j4/od6/public/values?alt=json-in-script&callback=myCallback"></script>
+  -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+  </body>
+</html>
