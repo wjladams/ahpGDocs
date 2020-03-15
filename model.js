@@ -1,4 +1,11 @@
 /**
+This is old code now, but I keep it around for an example
+of loading the ahp model from json.  We now use
+AHPTreeNode.from_matrix() instead and load the structure directly
+from our spreadsheet
+*/
+
+/**
 * This is the javascript for the AHP model.  For this to have worked
 * you must have loaded anpjs/ahpjs, see
 * https://github.com/dlens/anpjs for how to load that script.
