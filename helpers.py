@@ -28,7 +28,7 @@ def betterScaleToNumeric(vote, rowName, colName, betterVal=2.0, muchBetterVal=5.
         dom = stringNormalize(firstParenRegex(betterRegexes, vote))
         #console.log("Better: '"+dom+"' hope this makes sense")
         numericVote = betterVal
-    elif vote.endsWith("equal"):
+    elif vote.endswith("equal"):
         #Have an equality vote
         #Doesn't matter which we say is dominant, call it rowName
         dom = rowName

@@ -7,7 +7,7 @@
 var AHP_MODEL_JSON = {
   "name" : "Cell Phone Consumer Choice Model Version 1.0",
   "description" : "Our first attempt at the cell phone consumer choice model.",
-  "alts" : ["Galaxy S8", "Galaxy S9", "iPhone X"],
+  "alts" : ["Galaxy S8", "Galaxy S10", "iPhone X"],
   "children": [
       {
         "name": "Cost",

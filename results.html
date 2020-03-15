@@ -18,14 +18,21 @@
       <li>A 100 point score means that option is your perfect phone!
       <li>Nothing will ever hit a perfect 100 points
     </ul>
+    <div>
+      Recent Votes:
+      <select id="voter" onchange="updateGraph();">
+      </select>
+    </div>
     <div id='myPlot'><!-- Plotly chart will be drawn inside this DIV --></div>
     <!-- Optional JavaScript -->
-    <script src="https://cdn.jsdelivr.net/gh/dlens/anpjs/ahp.js"></script>
-    <!--<script src="../anpjs/ahp.js"></script>-->
+    <!-- <script src="https://cdn.jsdelivr.net/gh/dlens/anpjs/ahp.js"></script> -->
+    <script src="../anpjs/ahp.js"></script>
     <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
     <script src="model.js"></script>
     <!--Now calculations-->
     <script>
+      var matrix = []
+      MAX_VOTERS = 10
       MAX_PHONES=5
       function twoDArray(nrows, ncols) {
         let rval = []
@@ -66,18 +73,39 @@
         }
         return rval
       }
+      function setupVoterSelection() {
+        let timestampCol = 0
+        let nameCol = 9
+        let nrows = matrix.length
+        let endRow = nrows-1
+        let startRow = Math.max(nrows - MAX_VOTERS, 1)
+        let html = ""
+        for(let row=endRow; row >= startRow; row--) {
+          let name = matrix[row][nameCol]
+          let time = matrix[row][timestampCol]
+          let text = name+" at time: "+time
+          html+='<option value="'+row+'">'+text+"</option>\n";
+        }
+        document.getElementById('voter').innerHTML=html
+      }
       function myCallback(spreadsheetdata) {
         // do something with spreadsheet data here
-        let matrix = gsToMatrix(spreadsheetdata)
+        matrix = gsToMatrix(spreadsheetdata)
         //Let's get the last row and headers as a dictionary
         let ncols = matrix[0].length
-        //The last row
-        let ourRow = matrix.length - 1
+        //Fill in the select
+        setupVoterSelection()
+        updateGraph()
+      }
+
+      function updateGraph() {
+        let ourRow = document.getElementById('voter').value
+        let ncols = matrix[0].length
         for(let col=0; col < ncols; col++) {
           let colHeader = matrix[0][col]
           let vote = matrix[ourRow][col]
           if ((vote != null) && (vote != "")) {
-            betterScaleDataToAHP(colHeader, vote, AHP_MODEL)
+            betterScaleDataToAHP(colHeader, vote, AHP_MODEL, [/^Considering:?\s+(.*)\s+versus\s+(.*)$/])
           }
         }
         //Now we have the AHP model populated, now synthesize
