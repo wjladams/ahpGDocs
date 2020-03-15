@@ -27,11 +27,11 @@
     <table>
       <tr>
         <td><label for="better">AHP Better Value:</label></td>
-        <td><input type="number" id="better" value="2.0" onchange="updateGraph();"></input></td>
+        <td><input type="number" id="better" min="1.0" value="2.0" onchange="updateGraphFromId('better');" step="0.1"></input></td>
       </tr>
       <tr>
         <td><label for="muchBetter">AHP Much Better Value:</label></td>
-        <td><input type="number" id="muchBetter" value="5.0" onchange="updateGraph();"></input></td>
+        <td><input type="number" id="muchBetter" min="1.0" value="5.0" onchange="updateGraphFromId('muchBetter');" step="0.1"></input></td>
       </tr>
       <tr>
         <td colspan="2">
@@ -101,6 +101,23 @@
         return Number(rval)
       }
 
+      /**
+      * Just a wrapper to call updateGraph() except we also check that
+      * the new better value is <= muchBetter.  If we set from better
+      * to get here, we update muchBetter, otherwise vice-versa
+      */
+      function updateGraphFromId(id) {
+        let better = getNumber('better')
+        let muchBetter = getNumber('muchBetter')
+        if (better > muchBetter) {
+          if (id == 'better') {
+            document.getElementById('muchBetter').value = better
+          } else {
+            document.getElementById('better').value = muchBetter
+          }
+        }
+        updateGraph()
+      }
       /**
       Updates the graph by:
       1. Getting the better and much better values from the html items
