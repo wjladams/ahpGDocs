@@ -18,11 +18,28 @@
       <li>A 100 point score means that option is your perfect phone!
       <li>Nothing will ever hit a perfect 100 points
     </ul>
-    <div>
-      Recent Votes:
+    <hr/>
+    <div class="form-group">
+      <label for="voter">Voter:</label>
       <select id="voter" onchange="updateGraph();">
       </select>
     </div>
+    <table>
+      <tr>
+        <td><label for="better">AHP Better Value:</label></td>
+        <td><input type="number" id="better" value="2.0" onchange="updateGraph();"></input></td>
+      </tr>
+      <tr>
+        <td><label for="muchBetter">AHP Much Better Value:</label></td>
+        <td><input type="number" id="muchBetter" value="5.0" onchange="updateGraph();"></input></td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          <button type="button" class="btn btn-primary" onclick="resetBetter(); updateGraph();">Reset AHP Values</button>
+        </td>
+      </tr>
+    </table>
+    <hr/>
     <div id='myPlot'><!-- Plotly chart will be drawn inside this DIV --></div>
     <!-- Optional JavaScript -->
     <!-- <script src="https://cdn.jsdelivr.net/gh/dlens/anpjs/ahp.js"></script> -->
@@ -98,14 +115,32 @@
         updateGraph()
       }
 
+      function resetBetter() {
+        document.getElementById('better').value = 2.0
+        document.getElementById('muchBetter').value = 5.0
+      }
+
+      function getNumber(fromId) {
+        let rval = document.getElementById(fromId).value
+        return Number(rval)
+      }
+
       function updateGraph() {
         let ourRow = document.getElementById('voter').value
+        let better = getNumber('better')
+        let muchBetter = getNumber('muchBetter')
+        if (muchBetter < better) {
+          alert("Much Better should be >= better, returning to defaults")
+          resetBetter()
+          let better = document.getElementById('better').value
+          let muchBetter = document.getElementById('muchBetter').value
+        }
         let ncols = matrix[0].length
         for(let col=0; col < ncols; col++) {
           let colHeader = matrix[0][col]
           let vote = matrix[ourRow][col]
           if ((vote != null) && (vote != "")) {
-            betterScaleDataToAHP(colHeader, vote, AHP_MODEL, [/^Considering:?\s+(.*)\s+versus\s+(.*)$/])
+            betterScaleDataToAHP(colHeader, vote, AHP_MODEL, [/^Considering:?\s+(.*)\s+versus\s+(.*)$/], better, muchBetter)
           }
         }
         //Now we have the AHP model populated, now synthesize
@@ -133,9 +168,10 @@
           }
         ];
         var layout = {
+          title: "Best Cell Phone Scores",
           autosize: false,
           //width: 500,
-          height: 750,
+          height: 650,
           yaxis: {range: [0, 100]},
           margin: {
             l: 50,
