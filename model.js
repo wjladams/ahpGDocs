@@ -24,7 +24,7 @@ var AHP_MODEL_JSON = {
             "name": "Photography",
             "id": 2,
             "description" : "",
-            "alt_scores" : [0.2, 0.5, 0.1]
+            "alt_scores" : [0.2, 0.5, 1]
           },
           {
             "name": "Gaming",
