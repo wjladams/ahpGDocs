@@ -43,8 +43,8 @@
     <div id='myPlot'><!-- Plotly chart will be drawn inside this DIV --></div>
     <!-- Optional JavaScript -->
     <!-- <script src="https://cdn.jsdelivr.net/gh/dlens/anpjs/ahp.js"></script> -->
-    <script src="https://cdn.jsdelivr.net/gh/dlens/anpjs@0.3/ahp.js"></script>
-    <!-- <script src="../anpjs/ahp.js"></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/gh/dlens/anpjs@0.3/ahp.js"></script> -->
+    <script src="../anpjs/ahp.js"></script>
     <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
     <script src="model.js"></script>
     <!--Now calculations-->
@@ -70,7 +70,7 @@
         let maxCol=0
         let row=null
         let col=null
-        for (entry of entries) {
+        for (let entry of entries) {
           let data = entry["gs$cell"]
           row = data["row"]
           col = data["col"]
@@ -81,15 +81,33 @@
             maxCol = col
           }
         }
-        let rval = twoDArray(maxRow, maxCol)
-        for (entry of entries) {
+        let rval = twoDArray(maxRow+1, maxCol+1)
+        for (let entry of entries) {
           let data = entry["gs$cell"]
           row = Number(data["row"])-1
           col = Number(data["col"])-1
           let val = data["$t"]
-          rval[row][col]=val
+          if (rval[row]!=null) {
+            rval[row][col]=val
+          } else {
+            console.log("Unknown row "+row)
+          }
         }
-        return rval
+        //Remove empty rows
+        let nRval = []
+        for (let row of rval) {
+          let empty = true
+          for (let val of row) {
+            if ((val != null) && (val != "")) {
+              empty = false
+              break
+            }
+          }
+          if (!empty) {
+            nRval.push(row)
+          }
+        }
+        return nRval
       }
       function setupVoterSelection() {
         let timestampCol = 0
@@ -109,6 +127,7 @@
       function myCallback(spreadsheetdata) {
         // do something with spreadsheet data here
         matrix = gsToMatrix(spreadsheetdata)
+        AHP_MODEL = AHPTreeNode.from_matrix(matrix)
         //Let's get the last row and headers as a dictionary
         let ncols = matrix[0].length
         //Fill in the select
@@ -128,6 +147,7 @@
 
       function updateGraph() {
         let ourRow = document.getElementById('voter').value
+        let ratingsRow = 1
         let better = getNumber('better')
         let muchBetter = getNumber('muchBetter')
         if (muchBetter < better) {
@@ -144,6 +164,7 @@
             betterScaleDataToAHP(colHeader, vote, AHP_MODEL, [/^Considering:?\s+(.*)\s+versus\s+(.*)$/], better, muchBetter)
           }
         }
+        AHP_MODEL = AHPTreeNode.from_matrix(matrix, ourRow, ratingsRow, better, muchBetter)
         //Now we have the AHP model populated, now synthesize
         scores = AHP_MODEL.synthesize();
         //Let's sort them from largest to smallest
