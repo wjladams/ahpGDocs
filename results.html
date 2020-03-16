@@ -7,24 +7,24 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-
+    <link rel="stylesheet" href="results.css">
     <title>Cell Phone Consumer Results</title>
   </head>
   <body>
     <h1>Cell Phone Choice Results</h1>
-    Your results are as follows, please note the following:
-    <ul>
-      <li>The scores are out of 100 points.
-      <li>A 100 point score means that option is your perfect phone!
-      <li>Nothing will ever hit a perfect 100 points
-    </ul>
     <hr/>
+    Here are the results for the cell phone consumer choice model for the most recent participants.
     <div class="form-group">
-      <label for="voter">Voter:</label>
-      <select id="voter" onchange="updateGraph();">
-      </select>
     </div>
     <table>
+      <tr>
+        <td><label for="voter">For Voter:</label></td>
+        <td>
+          <select id="voter" onchange="updateGraph();">
+          </select>
+        </td>
+      </tr>
+
       <tr>
         <td><label for="better">AHP Better Value:</label></td>
         <td><input type="number" id="better" min="1.0" value="2.0" onchange="updateGraphFromId('better');" step="0.1"></input></td>
@@ -41,6 +41,14 @@
     </table>
     <hr/>
     <div id='myPlot'><!-- Plotly chart will be drawn inside this DIV --></div>
+    <hr/>
+    <h2>Additional Information</h2>
+    Your results are above, please note the following:
+    <ul>
+      <li>The scores are out of 100 points.
+      <li>A 100 point score means that option is your perfect phone!
+      <li>Nothing will ever hit a perfect 100 points
+    </ul>
     <!-- Optional JavaScript -->
     <!-- <script src="https://cdn.jsdelivr.net/gh/dlens/anpjs/ahp.js"></script> -->
     <script src="https://cdn.jsdelivr.net/gh/dlens/anpjs@v0.4.1/ahp.js"></script>
